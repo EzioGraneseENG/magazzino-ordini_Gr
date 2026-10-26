@@ -27,6 +27,9 @@ import java.util.List;
 @Table(name = "ordini")
 public class Ordine {
 
+    private static final BigDecimal SOGLIA_SPEDIZIONE_GRATUITA = new BigDecimal("150.00");
+    private static final BigDecimal COSTO_SPEDIZIONE = new BigDecimal("9.90");
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -78,6 +81,15 @@ public class Ordine {
             totale = totale.add(riga.subtotale());
         }
         return totale;
+    }
+
+    public BigDecimal speseSpedizione() {
+        return totale().compareTo(SOGLIA_SPEDIZIONE_GRATUITA) < 0
+                ? COSTO_SPEDIZIONE : BigDecimal.ZERO.setScale(2);
+    }
+
+    public BigDecimal totaleDaPagare() {
+        return totale().add(speseSpedizione());
     }
 
     public void spedisci() {

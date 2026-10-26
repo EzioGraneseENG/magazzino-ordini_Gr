@@ -43,10 +43,22 @@ public class RigaOrdine {
         quantita += altri;
     }
 
+    public int getScontoPercentuale() {
+        if (quantita >= 50) {
+            return 10;
+        }
+        if (quantita >= 10) {
+            return 5;
+        }
+        return 0;
+    }
+
     /** Prezzo unitario per quantità, arrotondato al centesimo. */
     public BigDecimal subtotale() {
-        return prezzoUnitario.multiply(BigDecimal.valueOf(quantita))
-                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal totaleLordo = prezzoUnitario.multiply(BigDecimal.valueOf(quantita));
+        BigDecimal fattoreSconto = BigDecimal.valueOf(100 - getScontoPercentuale());
+        return totaleLordo.multiply(fattoreSconto)
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
 
     public Long getId() {

@@ -39,6 +39,56 @@ class PagineTest {
     }
 
     @Test
+    void dettaglioOrdineMostraScontoTotaliESpedizione() throws Exception {
+        String urlDettaglio = mvc.perform(post("/ordini")
+                        .param("cliente", "Ferramenta Sconto")
+                        .param("righe[0].codice", "GUA-L")
+                        .param("righe[0].quantita", "10"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn()
+                .getResponse()
+                .getRedirectedUrl();
+
+        mvc.perform(get(urlDettaglio))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("5%")))
+                .andExpect(content().string(containsString("30,40 €")))
+                .andExpect(content().string(containsString("9,90 €")))
+                .andExpect(content().string(containsString("40,30 €")));
+    }
+
+    @Test
+    void elencoOrdiniMostraIlTotaleDaPagare() throws Exception {
+        mvc.perform(post("/ordini")
+                        .param("cliente", "Ferramenta Lista")
+                        .param("righe[0].codice", "GUA-L")
+                        .param("righe[0].quantita", "2"))
+                .andExpect(status().is3xxRedirection());
+
+        mvc.perform(get("/ordini"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Ferramenta Lista")))
+                .andExpect(content().string(containsString("16,30 €")));
+    }
+
+    @Test
+    void dettaglioOrdineIndicaLaSpedizioneGratuita() throws Exception {
+        String urlDettaglio = mvc.perform(post("/ordini")
+                        .param("cliente", "Ferramenta Spedizione")
+                        .param("righe[0].codice", "TRA-18V")
+                        .param("righe[0].quantita", "2"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn()
+                .getResponse()
+                .getRedirectedUrl();
+
+        mvc.perform(get(urlDettaglio))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Gratuita")))
+                .andExpect(content().string(containsString("178,00 €")));
+    }
+
+    @Test
     void ilFormMostraLErroreSeLaScortaNonBasta() throws Exception {
         mvc.perform(post("/ordini")
                         .param("cliente", "Ferramenta Bianchi")
