@@ -14,17 +14,22 @@
             <thead>
             <tr>
                 <th>Prodotto</th>
+                <th class="num">Prezzo unitario</th>
                 <th class="num">Quantità</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="riga, st : *{righe}">
                 <td>
-                    <select th:field="*{righe[__${st.index}__].codice}">
+                    <select class="selezione-prodotto" th:field="*{righe[__${st.index}__].codice}">
                         <option value="">—</option>
                         <option th:each="p : ${prodotti}" th:value="${p.codice}"
-                                th:text="${p.nome} + ' (' + ${p.disponibili} + ' disponibili)'">Prodotto</option>
+                                th:text="${p.nome} + ' (' + ${p.disponibili} + ' disponibili)'"
+                                th:attr="data-prezzo=${#numbers.formatDecimal(p.prezzo, 1, 'POINT', 2, 'COMMA')}">Prodotto</option>
                     </select>
+                </td>
+                <td class="num">
+                    <span class="prezzo-unitario" aria-live="polite">—</span>
                 </td>
                 <td class="num">
                     <input type="number" min="1" th:field="*{righe[__${st.index}__].quantita}">
@@ -34,6 +39,19 @@
         </table>
         <button type="submit" class="primario">Conferma ordine</button>
     </form>
+    <script>
+        document.querySelectorAll(".selezione-prodotto").forEach(function (selezione) {
+            const prezzo = selezione.closest("tr").querySelector(".prezzo-unitario");
+            const aggiornaPrezzo = function () {
+                const opzione = selezione.selectedOptions[0];
+                prezzo.textContent = opzione.dataset.prezzo
+                    ? opzione.dataset.prezzo + " €"
+                    : "—";
+            };
+            selezione.addEventListener("change", aggiornaPrezzo);
+            aggiornaPrezzo();
+        });
+    </script>
 </main>
 </body>
 </html>

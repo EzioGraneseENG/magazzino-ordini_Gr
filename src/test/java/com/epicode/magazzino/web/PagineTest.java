@@ -29,6 +29,16 @@ class PagineTest {
     }
 
     @Test
+    void nuovoOrdineMostraIlPrezzoUnitarioDelleOpzioniSelezionabili() throws Exception {
+        mvc.perform(get("/ordini/nuovo"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Prezzo unitario")))
+                .andExpect(content().string(containsString("data-prezzo=\"3,20\"")))
+                .andExpect(content().string(containsString("class=\"prezzo-unitario\" aria-live=\"polite\">—</span>")))
+                .andExpect(content().string(containsString("opzione.dataset.prezzo + \" €\"")));
+    }
+
+    @Test
     void ilFormCreaUnOrdineEPortaAlDettaglio() throws Exception {
         mvc.perform(post("/ordini")
                         .param("cliente", "Ferramenta Bianchi")
