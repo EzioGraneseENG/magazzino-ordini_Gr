@@ -51,6 +51,27 @@ transazione.
 - Annullare restituisce i pezzi al magazzino; un ordine spedito non si annulla.
 - Importi in `BigDecimal`, arrotondati al centesimo.
 
+## Funzionalità
+
+### Gestione Sconto
+
+Ogni riga dell'ordine applica uno sconto in base alla quantità complessiva del prodotto:
+
+- da 1 a 9 pezzi: nessuno sconto;
+- da 10 a 49 pezzi: sconto del 5%;
+- da 50 pezzi in su: sconto del 10%.
+
+Se lo stesso prodotto viene aggiunto più volte, le quantità si sommano prima di determinare
+lo scaglione. Il subtotale della riga è calcolato sul prezzo unitario fissato nell'ordine,
+al netto dello sconto, e arrotondato al centesimo con `HALF_UP`. Il totale merce è la somma
+dei subtotali scontati.
+
+La spedizione costa **9,90 €** se il totale merce dopo gli sconti è inferiore a **150,00 €**;
+da **150,00 €** in su è gratuita. Il totale da pagare è dato dal totale merce scontato più
+le eventuali spese di spedizione. Il dettaglio dell'ordine mostra la percentuale di sconto
+per riga e il riepilogo di merce, spedizione e totale da pagare; l'elenco degli ordini
+mostra il totale da pagare.
+
 ## Usarlo come template (docente)
 
 1. Pubblica il repo su GitHub e attiva **Settings → Template repository**.

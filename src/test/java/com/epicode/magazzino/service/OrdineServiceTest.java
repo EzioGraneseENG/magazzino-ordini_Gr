@@ -43,6 +43,7 @@ class OrdineServiceTest {
 
         assertNotNull(ordine.getId());
         assertEquals(new BigDecimal("25.00"), ordine.totale());
+        assertEquals(new BigDecimal("34.90"), ordine.totaleDaPagare());
         assertEquals(16, prodotti.findByCodice("T-VITI").orElseThrow().getDisponibili());
         assertEquals(2, prodotti.findByCodice("T-MART").orElseThrow().getDisponibili());
     }
